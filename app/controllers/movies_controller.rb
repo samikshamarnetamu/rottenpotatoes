@@ -7,8 +7,10 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @ratings_to_show = params[:ratings] ? params[:ratings].map { |k,v| k } : []
-    @movies = Movie.with_ratings @ratings_to_show
+    @ratings = params[:ratings]
+    @ratings_to_show = @ratings ? @ratings.map { |k,v| k } : []
+    @sort_by = params[:sort_by]
+    @movies = Movie.with_ratings @ratings_to_show, @sort_by
     @all_ratings = Movie.all_ratings
   end
 

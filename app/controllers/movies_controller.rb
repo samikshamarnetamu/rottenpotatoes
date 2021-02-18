@@ -7,11 +7,17 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @ratings = params[:ratings]
-    @ratings_to_show = @ratings ? @ratings.map { |k,v| k } : []
-    @sort_by = params[:sort_by]
-    @movies = Movie.with_ratings @ratings_to_show, @sort_by
+    # When the request comes from an update in index there will be a home=1 value in params
+    # Meaning that the values should be selected from params, when it comes from anywhere else this will
+    # be omitted so the values should be retrieved from session
+    p = params[:home] ? params : session.to_hash
+
+    @ratings_to_show = p['ratings'] ? p['ratings'].map { |k,v| k } : []
+    @sort_by = p['sort_by']
     @all_ratings = Movie.all_ratings
+    @movies = Movie.with_ratings @ratings_to_show, @sort_by
+
+    session.update ratings_to_show: @ratings_to_show, sort_by: @sort_by
   end
 
   def new

@@ -10,14 +10,23 @@ class MoviesController < ApplicationController
     # When the request comes from an update in index there will be a home=1 value in params
     # Meaning that the values should be selected from params, when it comes from anywhere else this will
     # be omitted so the values should be retrieved from session
+    
+    refer = request.referrer
+    if refer.nil? or not (refer.include? "amazonaws" or refer.include? "heroku") 
+      reset_session
+    end
+    
     p = params[:home] ? params : session.to_hash
+    
+    # puts "Session " , session.to_hash
+    # puts "Params ", params
 
     @ratings_to_show = p['ratings'] ? p['ratings'].map { |k,v| k } : []
     @sort_by = p['sort_by']
     @all_ratings = Movie.all_ratings
     @movies = Movie.with_ratings @ratings_to_show, @sort_by
 
-    session.update ratings_to_show: @ratings_to_show, sort_by: @sort_by
+    session.update ratings: @ratings_to_show, sort_by: @sort_by
   end
 
   def new

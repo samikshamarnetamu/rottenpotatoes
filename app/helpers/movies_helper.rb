@@ -5,6 +5,7 @@ module MoviesHelper
   end
 
   def sort_by_params(sort_by)
+    
     {
       sort_by: sort_by,
       home: 1,
